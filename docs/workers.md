@@ -336,7 +336,7 @@ syncs.
 Example `nginx` configuration snippet that handles the cases above. This is just an
 example and probably requires some changes according to your particular setup:
 
-```js
+```nginx
 # Choose sync worker based on the existence of "since" query parameter
 map $arg_since $sync {
     default synapse_sync;
@@ -379,27 +379,20 @@ upstream synapse_sync {
 
 # Sync initial/normal
 location ~ ^/_matrix/client/(r0|v3)/sync$ {
-	include snippets/matrix-proxy-headers.conf;
 	proxy_pass http://$sync;
-	proxy_read_timeout 1h;
 }
 
 # Normal sync
 location ~ ^/_matrix/client/(api/v1|r0|v3)/events$ {
-	include snippets/matrix-proxy-headers.conf;
 	proxy_pass http://synapse_sync;
 }
 
 # Initial_sync
 location ~ ^/_matrix/client/(api/v1|r0|v3)/initialSync$ {
-	include snippets/matrix-proxy-headers.conf;
 	proxy_pass http://synapse_initial_sync;
-	proxy_read_timeout 1h;
 }
 location ~ ^/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$ {
-	include snippets/matrix-proxy-headers.conf;
 	proxy_pass http://synapse_initial_sync;
-	proxy_read_timeout 1h;
 }
 ```
 
